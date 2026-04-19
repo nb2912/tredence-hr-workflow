@@ -1,30 +1,11 @@
-import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { useWorkflowStore } from '../../store/workflowStore';
+import { useNodeForm } from '../../hooks/useNodeForm';
 
 export function EndNodeForm({ nodeId }: { nodeId: string }) {
-  const node = useWorkflowStore(state => state.nodes.find(n => n.id === nodeId));
-  const updateNodeData = useWorkflowStore(state => state.updateNodeData);
-
-  const { register, handleSubmit, reset } = useForm({
-    defaultValues: {
-      endMessage: (node?.data as any)?.endMessage || '',
-      summaryFlag: (node?.data as any)?.summaryFlag || false
-    }
+  const { form, onSubmit } = useNodeForm(nodeId, { 
+    endMessage: '', 
+    summaryFlag: false 
   });
-
-  useEffect(() => {
-    if (node) {
-      reset({
-        endMessage: (node.data as any).endMessage || '',
-        summaryFlag: (node.data as any).summaryFlag || false
-      });
-    }
-  }, [node, reset]);
-
-  const onSubmit = (data: any) => {
-    updateNodeData(nodeId, data);
-  };
+  const { register, handleSubmit } = form;
 
   return (
     <form id="node-config-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">

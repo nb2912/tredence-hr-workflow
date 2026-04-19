@@ -4,9 +4,11 @@ import { useWorkflowStore } from '../../store/workflowStore';
 
 export function TaskNode({ id, data, selected }: any) {
   const deleteNode = useWorkflowStore(state => state.deleteNode);
+  const invalidNodeIds = useWorkflowStore(state => state.invalidNodeIds);
+  const isInvalid = invalidNodeIds.includes(id);
 
   return (
-    <div className={`relative group w-64 bg-dark-panel rounded-lg shadow-md hover:scale-[1.02] transition-transform overflow-hidden ${selected ? 'ring-2 ring-indigo-500' : 'ring-1 ring-border'}`}>
+    <div className={`relative group w-64 bg-dark-panel rounded-lg shadow-md hover:scale-[1.02] transition-transform overflow-hidden ${isInvalid ? 'ring-2 ring-red-500' : selected ? 'ring-2 ring-indigo-500' : 'ring-1 ring-border'}`}>
       <button 
         onClick={(e) => { e.stopPropagation(); deleteNode(id); }}
         className="absolute top-2 right-2 text-white/50 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"

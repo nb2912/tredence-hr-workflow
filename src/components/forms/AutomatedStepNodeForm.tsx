@@ -1,20 +1,15 @@
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useWorkflowStore } from '../../store/workflowStore';
+import { useNodeForm } from '../../hooks/useNodeForm';
 import { getAutomations } from '../../mocks/automations';
 
 export function AutomatedStepNodeForm({ nodeId }: { nodeId: string }) {
-  const node = useWorkflowStore(state => state.nodes.find(n => n.id === nodeId));
-  const updateNodeData = useWorkflowStore(state => state.updateNodeData);
   const [automationsList, setAutomationsList] = useState<any[]>([]);
-
-  const { register, handleSubmit, reset, watch, unregister } = useForm({
-    defaultValues: {
-      title: node?.data?.title || 'Automated Step',
-      actionId: (node?.data as any)?.actionId || '',
-      actionParams: (node?.data as any)?.actionParams || {}
-    }
+  const { node, form, onSubmit } = useNodeForm(nodeId, { 
+    title: 'Automated Step', 
+    actionId: '', 
+    actionParams: {} 
   });
+  const { register, handleSubmit, reset, watch } = form;
 
   const selectedActionId = watch('actionId');
 
@@ -22,19 +17,8 @@ export function AutomatedStepNodeForm({ nodeId }: { nodeId: string }) {
     getAutomations().then(data => setAutomationsList(data));
   }, []);
 
-  useEffect(() => {
-    if (node) {
-      reset({
-        title: node.data.title || 'Automated Step',
-        actionId: (node.data as any).actionId || '',
-        actionParams: (node.data as any).actionParams || {}
-      });
-    }
-  }, [node, reset]);
-
   const selectedActionInfo = automationsList.find(a => a.id === selectedActionId);
 
-  // Clean up old params when action changes
   useEffect(() => {
     if (selectedActionInfo) {
       const currentParams = (node?.data as any)?.actionParams || {};
@@ -42,14 +26,10 @@ export function AutomatedStepNodeForm({ nodeId }: { nodeId: string }) {
       selectedActionInfo.params.forEach((param: string) => {
         newParams[param] = currentParams[param] || '';
       });
+      // Merge with form values to keep other fields intact
       reset(values => ({ ...values, actionParams: newParams }));
     }
   }, [selectedActionId, selectedActionInfo, reset, node]);
-
-
-  const onSubmit = (data: any) => {
-    updateNodeData(nodeId, data);
-  };
 
   return (
     <form id="node-config-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">

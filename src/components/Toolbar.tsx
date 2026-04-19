@@ -16,15 +16,19 @@ export function Toolbar() {
   const setSimulationRunning = useWorkflowStore(state => state.setSimulationRunning);
   const exportWorkflow = useWorkflowStore(state => state.exportWorkflow);
 
+  const setInvalidNodeIds = useWorkflowStore(state => state.setInvalidNodeIds);
+
   const [isValid, setIsValid] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const { valid } = validateWorkflow(nodes, edges);
+    const { valid, invalidNodeIds } = validateWorkflow(nodes, edges);
     setIsValid(valid);
-  }, [nodes, edges]);
+    setInvalidNodeIds(invalidNodeIds);
+  }, [nodes, edges, setInvalidNodeIds]);
 
   const handleRunSimulation = () => {
-    const { valid, errors } = validateWorkflow(nodes, edges);
+    const { valid, errors, invalidNodeIds } = validateWorkflow(nodes, edges);
+    setInvalidNodeIds(invalidNodeIds);
     if (!valid) {
       errors.forEach(err => toast.error(err));
       return;
@@ -45,7 +49,8 @@ export function Toolbar() {
   };
 
   const handleValidate = () => {
-    const { valid, errors } = validateWorkflow(nodes, edges);
+    const { valid, errors, invalidNodeIds } = validateWorkflow(nodes, edges);
+    setInvalidNodeIds(invalidNodeIds);
     if (valid) {
       toast.success('Workflow is perfectly valid!');
     } else {

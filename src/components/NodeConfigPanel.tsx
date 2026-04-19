@@ -1,4 +1,4 @@
-import { X } from 'lucide-react';
+import { X, Play, CheckSquare, UserCheck, Zap, Square } from 'lucide-react';
 import { useWorkflowStore } from '../store/workflowStore';
 import { StartNodeForm } from './forms/StartNodeForm';
 import { TaskNodeForm } from './forms/TaskNodeForm';
@@ -27,21 +27,24 @@ export function NodeConfigPanel() {
     }
   };
 
-  const getHeaderColor = () => {
+  const getHeaderInfo = () => {
     switch (selectedNode.type) {
-      case 'start': return 'text-green-500';
-      case 'task': return 'text-blue-500';
-      case 'approval': return 'text-amber-500';
-      case 'automated': return 'text-purple-500';
-      case 'end': return 'text-red-500';
-      default: return 'text-white';
+      case 'start': return { color: 'text-green-500', Icon: Play };
+      case 'task': return { color: 'text-blue-500', Icon: CheckSquare };
+      case 'approval': return { color: 'text-amber-500', Icon: UserCheck };
+      case 'automated': return { color: 'text-purple-500', Icon: Zap };
+      case 'end': return { color: 'text-red-500', Icon: Square };
+      default: return { color: 'text-white', Icon: Play };
     }
   };
+
+  const { color, Icon } = getHeaderInfo();
 
   return (
     <div className="w-[320px] bg-dark-panel border-l border-border h-full flex flex-col absolute right-0 top-0 shadow-xl z-10 transition-transform duration-200">
       <div className="p-4 border-b border-border flex justify-between items-center bg-dark-bg/50">
-        <h3 className={`font-semibold capitalize ${getHeaderColor()} flex items-center gap-2`}>
+        <h3 className={`font-semibold capitalize ${color} flex items-center gap-2`}>
+          <Icon size={16} />
           {selectedNode.type} Node Settings
         </h3>
         <button 

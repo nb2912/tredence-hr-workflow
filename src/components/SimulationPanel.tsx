@@ -1,56 +1,15 @@
-import { useEffect, useState } from 'react';
-import { X, Download, Play, CheckCircle, Clock, AlertCircle } from 'lucide-react';
-import { useWorkflowStore } from '../store/workflowStore';
-import { simulateWorkflow } from '../mocks/simulate';
-import type { SimulationStep } from '../types/workflow';
+import { X, Download, Play, CheckCircle, Clock, AlertCircle, Trash2 } from 'lucide-react';
+import { useSimulation } from '../hooks/useSimulation';
 
 export function SimulationPanel() {
-  const simulationRunning = useWorkflowStore(state => state.simulationRunning);
-  const setSimulationRunning = useWorkflowStore(state => state.setSimulationRunning);
-  const exportWorkflow = useWorkflowStore(state => state.exportWorkflow);
-  
-  const [steps, setSteps] = useState<SimulationStep[]>([]);
-  const [visibleSteps, setVisibleSteps] = useState<SimulationStep[]>([]);
-  const [status, setStatus] = useState<'idle' | 'running' | 'completed' | 'error'>('idle');
-  const [errorMsg, setErrorMsg] = useState('');
-
-  useEffect(() => {
-    if (simulationRunning) {
-      setSteps([]);
-      setVisibleSteps([]);
-      setStatus('running');
-      setErrorMsg('');
-      
-      const json = exportWorkflow();
-      
-      simulateWorkflow(json)
-        .then(data => {
-          setSteps(data);
-        })
-        .catch(err => {
-          setStatus('error');
-          setErrorMsg(err.message);
-        });
-    } else {
-      setStatus('idle');
-    }
-  }, [simulationRunning, exportWorkflow]);
-
-  useEffect(() => {
-    if (status === 'running' && steps.length > 0) {
-      let index = 0;
-      const interval = setInterval(() => {
-        if (index < steps.length) {
-          setVisibleSteps(prev => [...prev, steps[index]]);
-          index++;
-        } else {
-          clearInterval(interval);
-          setStatus('completed');
-        }
-      }, 500);
-      return () => clearInterval(interval);
-    }
-  }, [steps, status]);
+  const {
+    simulationRunning,
+    setSimulationRunning,
+    visibleSteps,
+    status,
+    errorMsg,
+    clearLog
+  } = useSimulation();
 
   if (!simulationRunning) return null;
 
@@ -83,11 +42,16 @@ export function SimulationPanel() {
         </h3>
         <div className="flex items-center gap-2">
           {status === 'completed' && (
-            <button onClick={exportLog} className="text-xs flex items-center gap-1 text-gray-300 hover:text-white bg-white/5 px-2 py-1 rounded">
-              <Download size={12} /> Export Log
-            </button>
+            <>
+              <button onClick={clearLog} className="text-xs flex items-center gap-1 text-gray-300 hover:text-white bg-white/5 px-2 py-1 rounded transition-colors">
+                <Trash2 size={12} /> Clear Log
+              </button>
+              <button onClick={exportLog} className="text-xs flex items-center gap-1 text-gray-300 hover:text-white bg-white/5 px-2 py-1 rounded transition-colors">
+                <Download size={12} /> Export Log
+              </button>
+            </>
           )}
-          <button onClick={() => setSimulationRunning(false)} className="text-gray-400 hover:text-white">
+          <button onClick={() => setSimulationRunning(false)} className="text-gray-400 hover:text-white ml-2">
             <X size={16} />
           </button>
         </div>

@@ -52,8 +52,11 @@ export function useWorkflowCanvas() {
     setSelectedNode(null);
   }, [setSelectedNode]);
 
+  const setInvalidNodeIds = useWorkflowStore(state => state.setInvalidNodeIds);
+
   const handleValidate = () => {
-    const { valid, errors } = validateWorkflow(nodes, edges);
+    const { valid, errors, invalidNodeIds } = validateWorkflow(nodes, edges);
+    setInvalidNodeIds(invalidNodeIds);
     if (valid) {
       toast.success('Workflow is valid!');
       return true;

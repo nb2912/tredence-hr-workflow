@@ -1,32 +1,12 @@
-import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { useWorkflowStore } from '../../store/workflowStore';
+import { useNodeForm } from '../../hooks/useNodeForm';
 
 export function ApprovalNodeForm({ nodeId }: { nodeId: string }) {
-  const node = useWorkflowStore(state => state.nodes.find(n => n.id === nodeId));
-  const updateNodeData = useWorkflowStore(state => state.updateNodeData);
-
-  const { register, handleSubmit, reset } = useForm({
-    defaultValues: {
-      title: node?.data?.title || 'Approval',
-      approverRole: (node?.data as any)?.approverRole || '',
-      autoApproveThreshold: (node?.data as any)?.autoApproveThreshold || 100
-    }
+  const { form, onSubmit } = useNodeForm(nodeId, { 
+    title: 'Approval', 
+    approverRole: '', 
+    autoApproveThreshold: 100 
   });
-
-  useEffect(() => {
-    if (node) {
-      reset({
-        title: node.data.title || 'Approval',
-        approverRole: (node.data as any).approverRole || '',
-        autoApproveThreshold: (node.data as any).autoApproveThreshold || 100
-      });
-    }
-  }, [node, reset]);
-
-  const onSubmit = (data: any) => {
-    updateNodeData(nodeId, data);
-  };
+  const { register, handleSubmit } = form;
 
   return (
     <form id="node-config-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">

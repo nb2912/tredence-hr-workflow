@@ -13,6 +13,7 @@ interface WorkflowState {
   
   history: { nodes: BaseNode[]; edges: WorkflowEdge[] }[];
   historyIndex: number;
+  invalidNodeIds: string[];
 
   // Actions
   addNode: (node: BaseNode) => void;
@@ -30,6 +31,7 @@ interface WorkflowState {
   setSimulationSteps: (steps: SimulationStep[]) => void;
   setSimulationRunning: (running: boolean) => void;
   setWorkflowName: (name: string) => void;
+  setInvalidNodeIds: (ids: string[]) => void;
   
   undo: () => void;
   redo: () => void;
@@ -50,6 +52,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   
   history: [{ nodes: [], edges: [] }],
   historyIndex: 0,
+  invalidNodeIds: [],
 
   saveHistory: () => {
     const { nodes, edges, history, historyIndex } = get();
@@ -58,7 +61,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
       nodes: JSON.parse(JSON.stringify(nodes)), 
       edges: JSON.parse(JSON.stringify(edges)) 
     });
-    set({ history: newHistory, historyIndex: newHistory.length - 1 });
+    set({ history: newHistory, historyIndex: newHistory.length - 1, invalidNodeIds: [] });
   },
 
   addNode: (node) => {
@@ -124,6 +127,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   setSimulationSteps: (steps) => set({ simulationSteps: steps }),
   setSimulationRunning: (running) => set({ simulationRunning: running }),
   setWorkflowName: (name) => set({ workflowName: name }),
+  setInvalidNodeIds: (ids) => set({ invalidNodeIds: ids }),
 
   undo: () => {
     const { historyIndex, history } = get();

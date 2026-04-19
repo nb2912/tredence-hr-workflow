@@ -1,14 +1,16 @@
 import type { BaseNode, WorkflowEdge } from '../types/workflow';
 import { detectCycles } from './graphUtils';
 
-export const validateWorkflow = (nodes: BaseNode[], edges: WorkflowEdge[]): { valid: boolean; errors: string[] } => {
+export const validateWorkflow = (nodes: BaseNode[], edges: WorkflowEdge[]): { valid: boolean; errors: string[], invalidNodeIds: string[] } => {
   const errors: string[] = [];
+  const invalidNodeIds: string[] = [];
 
   const startNodes = nodes.filter(n => n.type === 'start');
   if (startNodes.length === 0) {
     errors.push("Workflow must have exactly one Start node.");
   } else if (startNodes.length > 1) {
     errors.push("Workflow cannot have more than one Start node.");
+    startNodes.forEach(n => invalidNodeIds.push(n.id));
   }
 
   const endNodes = nodes.filter(n => n.type === 'end');
@@ -16,6 +18,7 @@ export const validateWorkflow = (nodes: BaseNode[], edges: WorkflowEdge[]): { va
     errors.push("Workflow must have exactly one End node.");
   } else if (endNodes.length > 1) {
     errors.push("Workflow cannot have more than one End node.");
+    endNodes.forEach(n => invalidNodeIds.push(n.id));
   }
 
   // Check for orphan nodes (nodes with no incoming AND no outgoing edges, except single node graphs which aren't really allowed if we require start & end)
@@ -25,24 +28,28 @@ export const validateWorkflow = (nodes: BaseNode[], edges: WorkflowEdge[]): { va
     const hasOutgoing = edges.some(e => e.source === node.id);
 
     if (node.type === 'start') {
-      if (!hasOutgoing && nodes.length > 1) errors.push("Start node must have at least one outgoing connection.");
-      if (hasIncoming) errors.push("Start node cannot have incoming connections.");
+      if (!hasOutgoing && nodes.length > 1) { errors.push("Start node must have at least one outgoing connection."); invalidNodeIds.push(node.id); }
+      if (hasIncoming) { errors.push("Start node cannot have incoming connections."); invalidNodeIds.push(node.id); }
     } else if (node.type === 'end') {
-      if (!hasIncoming && nodes.length > 1) errors.push("End node must have at least one incoming connection.");
-      if (hasOutgoing) errors.push("End node cannot have outgoing connections.");
+      if (!hasIncoming && nodes.length > 1) { errors.push("End node must have at least one incoming connection."); invalidNodeIds.push(node.id); }
+      if (hasOutgoing) { errors.push("End node cannot have outgoing connections."); invalidNodeIds.push(node.id); }
     } else {
       if (!hasIncoming && !hasOutgoing) {
-        errors.push(`Node "${node.data.title}" is disconnected from the workflow.`);
+        errors.push(`Node "${(node.data as any).title || node.type}" is disconnected from the workflow.`);
+        invalidNodeIds.push(node.id);
       }
     }
   });
 
   if (detectCycles(nodes, edges)) {
     errors.push("Workflow contains cycles (infinite loops), which are not allowed.");
+    // In a real scenario, we'd find the exact cycle nodes. For now, mark all as invalid to highlight the error.
+    nodes.forEach(n => invalidNodeIds.push(n.id));
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
+    invalidNodeIds: [...new Set(invalidNodeIds)] // Ensure unique
   };
 };

@@ -11,6 +11,21 @@ const nodeTypes = [
   { type: 'end', label: 'End', icon: Square, color: 'text-red-500', desc: 'Workflow completion' },
 ];
 
+const templates = {
+  Onboarding: {
+    nodes: [{ id: 'start-1', type: 'start', position: { x: 0, y: 50 }, data: { title: 'Start Onboarding' } }, { id: 'task-1', type: 'task', position: { x: 250, y: 50 }, data: { title: 'IT Setup' } }, { id: 'end-1', type: 'end', position: { x: 550, y: 50 }, data: { title: 'End' } }],
+    edges: [{ id: 'e1-2', source: 'start-1', target: 'task-1' }, { id: 'e2-3', source: 'task-1', target: 'end-1' }]
+  },
+  'Leave Approval': {
+    nodes: [{ id: 'start-1', type: 'start', position: { x: 0, y: 50 }, data: { title: 'Leave Request' } }, { id: 'app-1', type: 'approval', position: { x: 250, y: 50 }, data: { title: 'Manager Approval' } }, { id: 'end-1', type: 'end', position: { x: 550, y: 50 }, data: { title: 'End' } }],
+    edges: [{ id: 'e1-2', source: 'start-1', target: 'app-1' }, { id: 'e2-3', source: 'app-1', target: 'end-1' }]
+  },
+  'Document Verification': {
+    nodes: [{ id: 'start-1', type: 'start', position: { x: 0, y: 50 }, data: { title: 'Submit Docs' } }, { id: 'auto-1', type: 'automated', position: { x: 250, y: 50 }, data: { title: 'Verify ID' } }, { id: 'end-1', type: 'end', position: { x: 550, y: 50 }, data: { title: 'Done' } }],
+    edges: [{ id: 'e1-2', source: 'start-1', target: 'auto-1' }, { id: 'e2-3', source: 'auto-1', target: 'end-1' }]
+  }
+};
+
 export function Sidebar() {
   const nodes = useWorkflowStore(state => state.nodes);
   const edges = useWorkflowStore(state => state.edges);
@@ -20,6 +35,17 @@ export function Sidebar() {
   const onDragStart = (event: React.DragEvent, nodeType: string) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
     event.dataTransfer.effectAllowed = 'move';
+  };
+
+  const loadTemplate = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const key = e.target.value as keyof typeof templates;
+    if (key && templates[key]) {
+      if (window.confirm('Load template? This will replace your current canvas.')) {
+        importWorkflow(templates[key].nodes as any, templates[key].edges as any);
+        toast.success(`Loaded ${key} template`);
+      }
+      e.target.value = '';
+    }
   };
 
   const handleExport = () => {
@@ -72,6 +98,19 @@ export function Sidebar() {
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+        <div className="mb-6">
+          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Templates</h2>
+          <select 
+            onChange={loadTemplate}
+            className="w-full bg-dark-bg border border-border rounded-md px-3 py-2 text-sm text-gray-300 hover:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          >
+            <option value="">Select a template...</option>
+            <option value="Onboarding">Onboarding</option>
+            <option value="Leave Approval">Leave Approval</option>
+            <option value="Document Verification">Document Verification</option>
+          </select>
+        </div>
+
         <div className="mb-6">
           <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Node Types</h2>
           <div className="flex flex-col gap-3">

@@ -1,42 +1,21 @@
-import { useEffect } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useFieldArray } from 'react-hook-form';
 import { Plus, Trash2 } from 'lucide-react';
-import { useWorkflowStore } from '../../store/workflowStore';
+import { useNodeForm } from '../../hooks/useNodeForm';
 
 export function TaskNodeForm({ nodeId }: { nodeId: string }) {
-  const node = useWorkflowStore(state => state.nodes.find(n => n.id === nodeId));
-  const updateNodeData = useWorkflowStore(state => state.updateNodeData);
-
-  const { register, control, handleSubmit, reset } = useForm({
-    defaultValues: {
-      title: node?.data?.title || 'Task',
-      description: (node?.data as any)?.description || '',
-      assignee: (node?.data as any)?.assignee || '',
-      dueDate: (node?.data as any)?.dueDate || '',
-      customFields: (node?.data as any)?.customFields || []
-    }
+  const { form, onSubmit } = useNodeForm(nodeId, { 
+    title: 'Task', 
+    description: '', 
+    assignee: '', 
+    dueDate: '', 
+    customFields: [] 
   });
+  const { register, control, handleSubmit } = form;
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "customFields"
   });
-
-  useEffect(() => {
-    if (node) {
-      reset({
-        title: node.data.title || 'Task',
-        description: (node.data as any).description || '',
-        assignee: (node.data as any).assignee || '',
-        dueDate: (node.data as any).dueDate || '',
-        customFields: (node.data as any).customFields || []
-      });
-    }
-  }, [node, reset]);
-
-  const onSubmit = (data: any) => {
-    updateNodeData(nodeId, data);
-  };
 
   return (
     <form id="node-config-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
