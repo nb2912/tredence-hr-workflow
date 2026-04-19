@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { useForm, DefaultValues, FieldValues } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
+import type { DefaultValues, FieldValues } from 'react-hook-form';
 import { useWorkflowStore } from '../store/workflowStore';
 
 export function useNodeForm<TFieldValues extends FieldValues>(
