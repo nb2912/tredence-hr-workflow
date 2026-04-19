@@ -67,7 +67,7 @@ function WorkflowDesigner() {
   }, [undo, redo, deleteNode, selectedNodeId]);
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-dark-bg text-gray-200">
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-app-bg text-gray-800">
       <Toolbar />
       <div className="flex flex-1 overflow-hidden relative">
         <Sidebar />
@@ -85,17 +85,17 @@ function WorkflowDesigner() {
             onDragOver={onDragOver}
             nodeTypes={nodeTypes}
             fitView
-            className="bg-[#13131f]"
+            className="bg-white"
             minZoom={0.2}
             maxZoom={2}
           >
-            <Background color="#2e2e3e" gap={16} size={1} />
-            <Controls className="bg-dark-panel border-border fill-gray-300" />
+            <Background color="#cbd5e1" gap={20} size={1} />
+            <Controls className="bg-white border-border fill-gray-500" />
             <MiniMap 
               nodeStrokeColor="#6366f1" 
-              nodeColor="#1e1e2e" 
-              maskColor="rgba(15, 15, 26, 0.7)"
-              className="bg-dark-panel border border-border"
+              nodeColor="#f1f5f9" 
+              maskColor="rgba(248, 250, 252, 0.7)"
+              className="bg-white border border-border"
             />
           </ReactFlow>
 
@@ -103,7 +103,7 @@ function WorkflowDesigner() {
           <SimulationPanel />
         </div>
       </div>
-      <Toaster position="bottom-right" theme="dark" />
+      <Toaster position="bottom-right" theme="light" />
     </div>
   );
 }

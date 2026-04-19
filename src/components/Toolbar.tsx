@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Play, Undo, Redo, CheckCircle, AlertCircle, X, Download } from 'lucide-react';
+import { Play, Undo, Redo, Download, ShieldCheck, History } from 'lucide-react';
 import { useWorkflowStore } from '../store/workflowStore';
 import { validateWorkflow } from '../utils/validation';
 import { toast } from 'sonner';
@@ -15,7 +15,6 @@ export function Toolbar() {
   const redo = useWorkflowStore(state => state.redo);
   const setSimulationRunning = useWorkflowStore(state => state.setSimulationRunning);
   const exportWorkflow = useWorkflowStore(state => state.exportWorkflow);
-
   const setInvalidNodeIds = useWorkflowStore(state => state.setInvalidNodeIds);
 
   const [isValid, setIsValid] = useState<boolean | null>(null);
@@ -59,74 +58,73 @@ export function Toolbar() {
   };
 
   return (
-    <div className="h-14 bg-dark-panel border-b border-border flex items-center justify-between px-4 z-20 relative">
+    <div className="h-14 bg-white border-b border-border flex items-center justify-between px-4 z-20 relative shadow-sm">
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 bg-indigo-600 rounded-md flex items-center justify-center shadow-lg">
-          <Play size={16} className="text-white ml-0.5" />
+        <div className="w-8 h-8 bg-indigo-600 rounded-md flex items-center justify-center shadow-md">
+          <Play size={16} className="text-white ml-0.5" fill="currentColor" />
         </div>
-        <input 
-          value={workflowName}
-          onChange={(e) => setWorkflowName(e.target.value)}
-          className="bg-transparent text-white font-medium text-lg border-b border-transparent hover:border-gray-500 focus:border-indigo-500 focus:outline-none px-1 py-0.5 transition-colors"
-        />
+        <div className="flex flex-col">
+          <input 
+            type="text"
+            value={workflowName}
+            onChange={(e) => setWorkflowName(e.target.value)}
+            className="bg-transparent border-b border-transparent hover:border-gray-200 focus:border-indigo-500 text-sm font-bold text-gray-800 outline-none transition-all w-48"
+          />
+          <span className="text-[10px] text-gray-400 font-medium uppercase tracking-widest">TalentFlow Designer</span>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2 bg-gray-50 border border-border p-1 rounded-lg">
+        <button 
+          onClick={undo}
+          disabled={historyIndex <= 0}
+          className="p-1.5 rounded-md text-gray-600 hover:text-indigo-600 hover:bg-white disabled:opacity-30 disabled:hover:bg-transparent transition-all"
+          title="Undo (Ctrl+Z)"
+        >
+          <Undo size={16} />
+        </button>
+        <button 
+          onClick={redo}
+          disabled={historyIndex >= history.length - 1}
+          className="p-1.5 rounded-md text-gray-600 hover:text-indigo-600 hover:bg-white disabled:opacity-30 disabled:hover:bg-transparent transition-all"
+          title="Redo (Ctrl+Y)"
+        >
+          <Redo size={16} />
+        </button>
       </div>
 
       <div className="flex items-center gap-2">
-        <div className="flex bg-dark-bg rounded-md border border-border overflow-hidden mr-2">
-          <button 
-            onClick={undo}
-            disabled={historyIndex === 0}
-            className="p-2 text-gray-400 hover:text-white hover:bg-white/5 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
-            title="Undo (Ctrl+Z)"
-          >
-            <Undo size={16} />
-          </button>
-          <div className="w-[1px] bg-border"></div>
-          <button 
-            onClick={redo}
-            disabled={historyIndex === history.length - 1}
-            className="p-2 text-gray-400 hover:text-white hover:bg-white/5 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
-            title="Redo (Ctrl+Y)"
-          >
-            <Redo size={16} />
-          </button>
-        </div>
-
         <button 
           onClick={handleValidate}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 border border-border transition-colors"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-gray-600 hover:text-indigo-600 hover:bg-gray-50 border border-border transition-all"
         >
-          {isValid ? <CheckCircle size={14} className="text-green-500" /> : <AlertCircle size={14} className="text-red-500" />}
+          <ShieldCheck size={14} className={isValid ? 'text-green-500' : 'text-gray-400'} />
           Validate
         </button>
 
         <button 
           onClick={() => useWorkflowStore.getState().autoLayout()}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 border border-border transition-colors"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-gray-600 hover:text-indigo-600 hover:bg-gray-50 border border-border transition-all"
           title="Auto Layout Nodes"
         >
-          <div className="flex gap-1">
-             <div className="w-1.5 h-1.5 bg-gray-400 rounded-sm"></div>
-             <div className="w-1.5 h-1.5 bg-gray-400 rounded-sm"></div>
-          </div>
+          <History size={14} />
           Auto Layout
         </button>
 
         <button 
           onClick={handleExport}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 border border-border transition-colors"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-gray-600 hover:text-indigo-600 hover:bg-gray-50 border border-border transition-all"
         >
           <Download size={14} />
-          Export JSON
+          Export
         </button>
-
+        
         <button 
           onClick={handleRunSimulation}
-          disabled={!isValid && nodes.length > 0}
-          className="flex items-center gap-2 px-4 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+          className="flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition-all shadow-md active:scale-95 ml-2"
         >
-          <Play size={14} />
-          Run Simulation
+          <Play size={14} fill="currentColor" />
+          Simulate
         </button>
       </div>
     </div>

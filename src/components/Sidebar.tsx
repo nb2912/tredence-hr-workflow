@@ -95,17 +95,17 @@ export function Sidebar() {
   const isValid = nodes.length > 0 && invalidNodeIds.length === 0;
 
   return (
-    <div className="w-[240px] bg-dark-panel border-r border-border h-full flex flex-col z-10">
+    <div className="w-[240px] bg-app-panel border-r border-border h-full flex flex-col z-10 shadow-sm">
       <div className="p-4 border-b border-border">
-        <h1 className="text-lg font-bold text-white tracking-tight">HR Workflow Designer</h1>
+        <h1 className="text-lg font-bold text-gray-900 tracking-tight">TalentFlow Designer</h1>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
         <div className="mb-6">
-          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Templates</h2>
+          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Templates</h2>
           <select 
             onChange={loadTemplate}
-            className="w-full bg-dark-bg border border-border rounded-md px-3 py-2 text-sm text-gray-300 hover:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-full bg-app-bg border border-border rounded-md px-3 py-2 text-sm text-gray-700 hover:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all"
           >
             <option value="">Select a template...</option>
             <option value="Onboarding">Onboarding</option>
@@ -115,18 +115,18 @@ export function Sidebar() {
         </div>
 
         <div className="mb-6">
-          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Node Types</h2>
+          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Node Types</h2>
           <div className="flex flex-col gap-3">
             {nodeTypes.map((item) => (
               <div
                 key={item.type}
-                className="bg-dark-bg p-3 rounded-md border border-border cursor-grab hover:border-indigo-500 hover:shadow-md transition-all flex flex-col gap-1"
+                className="bg-white p-3 rounded-md border border-border cursor-grab hover:border-indigo-500 hover:shadow-md transition-all flex flex-col gap-1 group"
                 onDragStart={(e) => onDragStart(e, item.type)}
                 draggable
               >
                 <div className="flex items-center gap-2">
                   <item.icon size={16} className={item.color} />
-                  <span className="text-sm font-medium text-gray-200">{item.label}</span>
+                  <span className="text-sm font-medium text-gray-800">{item.label}</span>
                 </div>
                 <span className="text-xs text-gray-500">{item.desc}</span>
               </div>
@@ -135,22 +135,22 @@ export function Sidebar() {
         </div>
 
         <div>
-          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Workflow Actions</h2>
+          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Workflow Actions</h2>
           <div className="flex flex-col gap-2">
-            <button onClick={handleExport} className="flex items-center gap-2 text-sm text-gray-300 hover:text-white bg-dark-bg hover:bg-white/5 border border-border p-2 rounded-md transition-colors">
+            <button onClick={handleExport} className="flex items-center gap-2 text-sm text-gray-600 hover:text-indigo-600 bg-app-bg hover:bg-indigo-50 border border-border p-2 rounded-md transition-all">
               <Download size={16} /> Export JSON
             </button>
-            <button onClick={handleImport} className="flex items-center gap-2 text-sm text-gray-300 hover:text-white bg-dark-bg hover:bg-white/5 border border-border p-2 rounded-md transition-colors">
+            <button onClick={handleImport} className="flex items-center gap-2 text-sm text-gray-600 hover:text-indigo-600 bg-app-bg hover:bg-indigo-50 border border-border p-2 rounded-md transition-all">
               <Upload size={16} /> Import JSON
             </button>
-            <button onClick={handleClear} className="flex items-center gap-2 text-sm text-red-400 hover:text-red-300 bg-dark-bg hover:bg-red-500/10 border border-border p-2 rounded-md transition-colors mt-2">
+            <button onClick={handleClear} className="flex items-center gap-2 text-sm text-red-500 hover:text-red-600 bg-app-bg hover:bg-red-50 border border-border p-2 rounded-md transition-all mt-2">
               <Trash2 size={16} /> Clear Canvas
             </button>
           </div>
         </div>
       </div>
 
-      <div className="p-4 border-t border-border bg-dark-bg flex justify-between items-center text-xs text-gray-500">
+      <div className="p-4 border-t border-border bg-gray-50 flex justify-between items-center text-xs text-gray-500">
         <div className="flex flex-col gap-1">
           <span>Nodes: {nodes.length}</span>
           <span>Edges: {edges.length}</span>
@@ -161,7 +161,7 @@ export function Sidebar() {
           ) : (
             <X size={16} className="text-red-500" />
           )}
-          <span>{isValid ? 'Valid' : 'Invalid'}</span>
+          <span className={isValid ? "text-green-600" : "text-red-600"}>{isValid ? 'Valid' : 'Invalid'}</span>
         </div>
       </div>
     </div>

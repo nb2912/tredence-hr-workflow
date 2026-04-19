@@ -10,28 +10,28 @@ export function ApprovalNode({ id, data, selected }: NodeProps<ApprovalNodeData 
   const isInvalid = invalidNodeIds.includes(id);
 
   return (
-    <div className={`relative group w-64 bg-dark-panel rounded-lg shadow-md hover:scale-[1.02] transition-transform overflow-hidden ${isInvalid ? 'ring-2 ring-red-500' : selected ? 'ring-2 ring-indigo-500' : 'ring-1 ring-border'}`}>
+    <div className={`relative group w-64 bg-white rounded-lg shadow-sm border-2 transition-all overflow-hidden ${isInvalid ? 'border-red-500 shadow-md ring-4 ring-red-500/10' : selected ? 'border-indigo-500 shadow-md ring-4 ring-indigo-500/10' : 'border-border'}`}>
       <button 
         onClick={(e) => { e.stopPropagation(); deleteNode(id); }}
-        className="absolute top-2 right-2 text-white/50 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+        className="absolute top-2 right-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity z-20"
       >
         <X size={16} />
       </button>
 
-      <div className="bg-amber-500 px-4 py-2 flex items-center gap-2">
-        <UserCheck size={16} className="text-white" />
-        <span className="font-semibold text-white truncate pr-6">{data.title || 'Approval'}</span>
+      <div className="bg-amber-50 px-4 py-2 flex items-center gap-2 border-b border-border">
+        <UserCheck size={16} className="text-amber-600" />
+        <span className="font-bold text-amber-600 text-xs uppercase tracking-wider">{data.title || 'Approval'}</span>
       </div>
       
       <div className="p-4 flex flex-col gap-2 text-sm">
         <div className="flex justify-between items-center">
-          <span className="text-gray-400">Approver:</span>
-          <span className="font-medium text-amber-400">{data.approverRole || 'Unassigned'}</span>
+          <span className="text-gray-500 text-xs">Approver Role:</span>
+          <span className="font-bold text-gray-800">{data.approverRole || 'Unassigned'}</span>
         </div>
       </div>
 
-      <Handle type="target" position={Position.Left} className="!bg-indigo-500 !w-3 !h-3 !border-dark-panel" />
-      <Handle type="source" position={Position.Right} className="!bg-indigo-500 !w-3 !h-3 !border-dark-panel" />
+      <Handle type="target" position={Position.Left} className="w-3 h-3 bg-amber-500 border-2 border-white" />
+      <Handle type="source" position={Position.Right} className="w-3 h-3 bg-amber-500 border-2 border-white" />
     </div>
   );
 }

@@ -1,91 +1,91 @@
-import { X, Download, Play, CheckCircle, Clock, AlertCircle, Trash2 } from 'lucide-react';
+import { X, Play, CheckCircle2, AlertCircle, Clock } from 'lucide-react';
+import { useWorkflowStore } from '../store/workflowStore';
 import { useSimulation } from '../hooks/useSimulation';
 
 export function SimulationPanel() {
-  const {
-    simulationRunning,
-    setSimulationRunning,
-    visibleSteps,
-    status,
-    errorMsg,
-    clearLog
-  } = useSimulation();
+  const simulationRunning = useWorkflowStore(state => state.simulationRunning);
+  const setSimulationRunning = useWorkflowStore(state => state.setSimulationRunning);
+  const { visibleSteps } = useSimulation();
 
   if (!simulationRunning) return null;
 
-  const exportLog = () => {
-    const text = visibleSteps.map(s => `[${s.timestamp}] ${s.nodeType.toUpperCase()}: ${s.message} (${s.status})`).join('\n');
-    const blob = new Blob([text], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'simulation-log.txt';
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const getStatusIcon = (stepStatus: string) => {
-    switch (stepStatus) {
-      case 'completed': return <CheckCircle size={16} className="text-green-500" />;
-      case 'failed': return <AlertCircle size={16} className="text-red-500" />;
-      case 'running': return <Play size={16} className="text-blue-500 animate-pulse" />;
-      default: return <Clock size={16} className="text-gray-500" />;
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'completed': return <CheckCircle2 size={18} className="text-green-500" />;
+      case 'running': return <Clock size={18} className="text-indigo-500 animate-spin" />;
+      case 'pending': return <Clock size={18} className="text-gray-300" />;
+      default: return null;
     }
   };
 
   return (
-    <div className="absolute bottom-6 right-1/2 translate-x-1/2 w-full max-w-2xl bg-dark-panel border border-border rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col max-h-[60vh]">
-      <div className="p-3 bg-dark-bg/80 border-b border-border flex justify-between items-center">
-        <h3 className="font-semibold text-white flex items-center gap-2">
-          {status === 'running' && <Play size={16} className="text-green-500 animate-pulse" />}
-          Simulation Log
-        </h3>
-        <div className="flex items-center gap-2">
-          {status === 'completed' && (
-            <>
-              <button onClick={clearLog} className="text-xs flex items-center gap-1 text-gray-300 hover:text-white bg-white/5 px-2 py-1 rounded transition-colors">
-                <Trash2 size={12} /> Clear Log
-              </button>
-              <button onClick={exportLog} className="text-xs flex items-center gap-1 text-gray-300 hover:text-white bg-white/5 px-2 py-1 rounded transition-colors">
-                <Download size={12} /> Export Log
-              </button>
-            </>
-          )}
-          <button onClick={() => setSimulationRunning(false)} className="text-gray-400 hover:text-white ml-2">
-            <X size={16} />
-          </button>
+    <div className="absolute right-0 top-0 w-[350px] bg-white border-l border-border h-full shadow-2xl z-30 flex flex-col animate-in slide-in-from-right duration-300">
+      <div className="p-4 border-b border-border flex justify-between items-center bg-gray-50/80">
+        <div className="flex flex-col">
+          <h3 className="font-bold text-gray-900">Simulation Test</h3>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest bg-indigo-100 text-indigo-600 animate-pulse">
+              Live Execution
+            </span>
+          </div>
         </div>
+        <button 
+          onClick={() => setSimulationRunning(false)}
+          className="p-1.5 rounded-full hover:bg-gray-200 text-gray-400 hover:text-gray-600 transition-all"
+        >
+          <X size={20} />
+        </button>
       </div>
 
-      <div className="p-4 overflow-y-auto flex-1 custom-scrollbar space-y-3 bg-[#13131f]">
-        {status === 'error' && (
-          <div className="p-3 bg-red-500/10 border border-red-500/30 text-red-400 rounded flex gap-2">
-            <AlertCircle size={18} className="shrink-0" />
-            <span className="text-sm">{errorMsg}</span>
+      <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-white">
+        {visibleSteps.length === 0 ? (
+          <div className="h-full flex flex-col items-center justify-center text-gray-400 gap-3">
+            <Play size={32} className="opacity-10" />
+            <p className="text-xs text-center italic max-w-[200px]">
+              Initializing graph traversal and validating node logic...
+            </p>
           </div>
-        )}
-
-        {visibleSteps.map((step, idx) => {
-          if (!step) return null;
-          return (
-            <div key={idx} className="flex gap-3 items-start animate-fade-in-up">
-              <div className="mt-0.5">{getStatusIcon(step.status)}</div>
-              <div className="flex-1 bg-dark-bg border border-border p-3 rounded-lg shadow-sm">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400">{step.nodeType}</span>
-                  <span className="text-[10px] text-gray-500">{new Date(step.timestamp).toLocaleTimeString()}</span>
+        ) : (
+          <div className="space-y-6 relative before:absolute before:left-[9px] before:top-2 before:bottom-2 before:w-[1px] before:bg-gray-100">
+            {visibleSteps.map((step, index) => {
+              const isRunning = step.status === 'running';
+              return (
+                <div key={index} className="flex gap-4 group animate-in fade-in slide-in-from-bottom-2 duration-500 relative">
+                  <div className={`z-10 w-5 h-5 rounded-full flex items-center justify-center bg-white border-2 transition-all duration-300 ${isRunning ? 'border-indigo-500 scale-125 shadow-md shadow-indigo-100' : 'border-gray-200'}`}>
+                    {getStatusIcon(step.status)}
+                  </div>
+                  
+                  <div className={`flex-1 transition-all duration-300 ${isRunning ? 'translate-x-1' : ''}`}>
+                    <div className="flex justify-between items-start mb-0.5">
+                      <h4 className={`text-xs font-bold uppercase tracking-tight transition-colors ${isRunning ? 'text-indigo-600' : 'text-gray-500'}`}>
+                        {step.nodeType}
+                      </h4>
+                      <span className="text-[9px] text-gray-400 font-mono">{new Date(step.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+                    </div>
+                    <p className={`text-sm leading-snug transition-colors ${isRunning ? 'text-gray-900 font-medium' : 'text-gray-600'}`}>
+                      {step.message}
+                    </p>
+                    
+                    {step.status === 'completed' && (
+                      <div className="mt-1 flex items-center gap-1 text-[9px] font-bold text-green-600 uppercase">
+                         Done
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <p className="text-sm text-gray-200">{step.message}</p>
-              </div>
-            </div>
-          );
-        })}
-        
-        {status === 'completed' && (
-          <div className="text-center pt-4 pb-2 text-sm text-gray-500">
-            Simulation finished.
+              );
+            })}
           </div>
         )}
+      </div>
+
+      <div className="p-4 border-t border-border bg-gray-50/80">
+        <button 
+          onClick={() => setSimulationRunning(false)}
+          className="w-full py-2 bg-gray-900 text-white rounded-md text-sm font-bold hover:bg-gray-800 transition-all active:scale-95"
+        >
+          Stop Simulation
+        </button>
       </div>
     </div>
   );

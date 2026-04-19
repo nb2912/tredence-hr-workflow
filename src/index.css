@@ -2,9 +2,9 @@
 
 @theme {
   --color-primary: #6366f1;
-  --color-dark-bg: #0f0f1a;
-  --color-dark-panel: #1e1e2e;
-  --color-border: #2e2e3e;
+  --color-app-bg: #f8fafc;
+  --color-app-panel: #ffffff;
+  --color-border: #e2e8f0;
   
   --color-node-start: #22c55e;
   --color-node-task: #3b82f6;
@@ -15,30 +15,30 @@
 
 @layer base {
   body {
-    background-color: var(--color-dark-bg);
-    color: #e2e8f0;
+    background-color: var(--color-app-bg);
+    color: #1e293b;
     font-family: 'Inter', system-ui, sans-serif;
   }
 }
 
-/* Custom styles for React Flow handles and nodes to match dark theme */
+/* Custom styles for React Flow handles and nodes */
 .react-flow__node {
   border-radius: 8px;
-  @apply transition-all duration-200;
+  @apply transition-all duration-200 shadow-sm border border-border;
 }
 .react-flow__node.selected {
-  @apply z-50;
+  @apply z-50 shadow-md;
 }
 
-/* React Flow Controls dark theme override */
+/* React Flow Controls light theme override */
 .react-flow__controls {
-  @apply shadow-lg border border-border rounded overflow-hidden;
+  @apply shadow-md border border-border rounded overflow-hidden;
 }
 .react-flow__controls-button {
-  @apply bg-dark-panel border-b border-border fill-gray-300 transition-colors;
+  @apply bg-app-panel border-b border-border fill-gray-500 transition-colors;
 }
 .react-flow__controls-button:hover {
-  @apply bg-dark-bg fill-white;
+  @apply bg-gray-50 fill-primary;
 }
 .react-flow__controls-button:last-child {
   @apply border-b-0;
@@ -48,5 +48,5 @@
   width: 10px;
   height: 10px;
   background-color: #6366f1;
-  border: 2px solid #1e1e2e;
+  border: 2px solid #ffffff;
 }
