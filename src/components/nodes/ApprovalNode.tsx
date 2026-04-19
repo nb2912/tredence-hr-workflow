@@ -1,8 +1,9 @@
-import { Handle, Position } from '@xyflow/react';
+import { Handle, Position, NodeProps } from '@xyflow/react';
 import { UserCheck, X } from 'lucide-react';
 import { useWorkflowStore } from '../../store/workflowStore';
+import type { ApprovalNodeData } from '../../types/workflow';
 
-export function ApprovalNode({ id, data, selected }: any) {
+export function ApprovalNode({ id, data, selected }: NodeProps<ApprovalNodeData & Record<string, unknown>>) {
   const deleteNode = useWorkflowStore(state => state.deleteNode);
   const invalidNodeIds = useWorkflowStore(state => state.invalidNodeIds);
   const isInvalid = invalidNodeIds.includes(id);

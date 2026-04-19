@@ -91,6 +91,9 @@ export function Sidebar() {
     }
   };
 
+  const invalidNodeIds = useWorkflowStore(state => state.invalidNodeIds);
+  const isValid = nodes.length > 0 && invalidNodeIds.length === 0;
+
   return (
     <div className="w-[240px] bg-dark-panel border-r border-border h-full flex flex-col z-10">
       <div className="p-4 border-b border-border">
@@ -147,9 +150,19 @@ export function Sidebar() {
         </div>
       </div>
 
-      <div className="p-4 border-t border-border bg-dark-bg flex justify-between text-xs text-gray-500">
-        <span>Nodes: {nodes.length}</span>
-        <span>Edges: {edges.length}</span>
+      <div className="p-4 border-t border-border bg-dark-bg flex justify-between items-center text-xs text-gray-500">
+        <div className="flex flex-col gap-1">
+          <span>Nodes: {nodes.length}</span>
+          <span>Edges: {edges.length}</span>
+        </div>
+        <div className="flex items-center gap-1" title={isValid ? "Workflow is valid" : "Workflow contains errors"}>
+          {isValid ? (
+            <CheckSquare size={16} className="text-green-500" />
+          ) : (
+            <X size={16} className="text-red-500" />
+          )}
+          <span>{isValid ? 'Valid' : 'Invalid'}</span>
+        </div>
       </div>
     </div>
   );

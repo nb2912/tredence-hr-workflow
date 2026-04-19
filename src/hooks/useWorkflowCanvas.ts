@@ -66,6 +66,40 @@ export function useWorkflowCanvas() {
     }
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger if inside an input/textarea
+      if (document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA') {
+        return;
+      }
+
+      if (e.key === 'Escape') {
+        setSelectedNode(null);
+      } else if (e.key === 'z' && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
+        e.preventDefault();
+        useWorkflowStore.getState().undo();
+      } else if ((e.key === 'y' && (e.ctrlKey || e.metaKey)) || (e.key === 'z' && (e.ctrlKey || e.metaKey) && e.shiftKey)) {
+        e.preventDefault();
+        useWorkflowStore.getState().redo();
+      } else if (e.key === 'e' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        const json = useWorkflowStore.getState().exportWorkflow();
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const name = useWorkflowStore.getState().workflowName;
+        a.download = `${name.toLowerCase().replace(/\s+/g, '-')}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        toast.success('Exported JSON');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [setSelectedNode]);
+
   return {
     reactFlowWrapper,
     onDragOver,

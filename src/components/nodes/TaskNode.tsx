@@ -1,8 +1,9 @@
-import { Handle, Position } from '@xyflow/react';
+import { Handle, Position, NodeProps } from '@xyflow/react';
 import { CheckSquare, X } from 'lucide-react';
 import { useWorkflowStore } from '../../store/workflowStore';
+import type { TaskNodeData } from '../../types/workflow';
 
-export function TaskNode({ id, data, selected }: any) {
+export function TaskNode({ id, data, selected }: NodeProps<TaskNodeData & Record<string, unknown>>) {
   const deleteNode = useWorkflowStore(state => state.deleteNode);
   const invalidNodeIds = useWorkflowStore(state => state.invalidNodeIds);
   const isInvalid = invalidNodeIds.includes(id);
