@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 import { useReactFlow } from '@xyflow/react';
 import { useWorkflowStore } from '../store/workflowStore';
 import type { BaseNode, NodeType } from '../types/workflow';
