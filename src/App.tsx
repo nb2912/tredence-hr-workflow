@@ -1,121 +1,119 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useCallback, useEffect } from 'react';
+import { ReactFlow, ReactFlowProvider, Background, Controls, MiniMap, Panel } from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
+import { Toaster } from 'sonner';
 
-function App() {
-  const [count, setCount] = useState(0)
+import { Sidebar } from './components/Sidebar';
+import { Toolbar } from './components/Toolbar';
+import { NodeConfigPanel } from './components/NodeConfigPanel';
+import { SimulationPanel } from './components/SimulationPanel';
+
+import { StartNode } from './components/nodes/StartNode';
+import { TaskNode } from './components/nodes/TaskNode';
+import { ApprovalNode } from './components/nodes/ApprovalNode';
+import { AutomatedStepNode } from './components/nodes/AutomatedStepNode';
+import { EndNode } from './components/nodes/EndNode';
+
+import { useWorkflowStore } from './store/workflowStore';
+import { useWorkflowCanvas } from './hooks/useWorkflowCanvas';
+
+const nodeTypes = {
+  start: StartNode,
+  task: TaskNode,
+  approval: ApprovalNode,
+  automated: AutomatedStepNode,
+  end: EndNode,
+};
+
+function WorkflowDesigner() {
+  const nodes = useWorkflowStore(state => state.nodes);
+  const edges = useWorkflowStore(state => state.edges);
+  const onNodesChange = useWorkflowStore(state => state.onNodesChange);
+  const onEdgesChange = useWorkflowStore(state => state.onEdgesChange);
+  const onConnect = useWorkflowStore(state => state.onConnect);
+  
+  const { reactFlowWrapper, onDragOver, onDrop, onNodeClick, onPaneClick } = useWorkflowCanvas();
+
+  // Keyboard shortcuts
+  const undo = useWorkflowStore(state => state.undo);
+  const redo = useWorkflowStore(state => state.redo);
+  const deleteNode = useWorkflowStore(state => state.deleteNode);
+  const deleteEdge = useWorkflowStore(state => state.deleteEdge);
+  const selectedNodeId = useWorkflowStore(state => state.selectedNodeId);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger shortcuts if user is typing in an input
+      if (document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA') {
+        return;
+      }
+      
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+        e.preventDefault();
+        undo();
+      } else if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
+        e.preventDefault();
+        redo();
+      } else if (e.key === 'Delete' || e.key === 'Backspace') {
+        if (selectedNodeId) {
+          deleteNode(selectedNodeId);
+        }
+        // Could also add edge deletion logic here if edges can be selected
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [undo, redo, deleteNode, selectedNodeId]);
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-dark-bg text-gray-200">
+      <Toolbar />
+      <div className="flex flex-1 overflow-hidden relative">
+        <Sidebar />
+        
+        <div className="flex-1 relative" ref={reactFlowWrapper}>
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onNodeClick={onNodeClick}
+            onPaneClick={onPaneClick}
+            onDrop={onDrop}
+            onDragOver={onDragOver}
+            nodeTypes={nodeTypes}
+            fitView
+            className="bg-[#13131f]"
+            minZoom={0.2}
+            maxZoom={2}
+          >
+            <Background color="#2e2e3e" gap={16} size={1} />
+            <Controls className="bg-dark-panel border-border fill-gray-300" />
+            <MiniMap 
+              nodeStrokeColor="#6366f1" 
+              nodeColor="#1e1e2e" 
+              maskColor="rgba(15, 15, 26, 0.7)"
+              className="bg-dark-panel border border-border"
+            />
+          </ReactFlow>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+          <NodeConfigPanel />
+          <SimulationPanel />
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      </div>
+      <Toaster position="bottom-right" theme="dark" />
+    </div>
+  );
 }
 
-export default App
+function App() {
+  return (
+    <ReactFlowProvider>
+      <WorkflowDesigner />
+    </ReactFlowProvider>
+  );
+}
+
+export default App;
