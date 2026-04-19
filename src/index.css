@@ -24,7 +24,26 @@
 /* Custom styles for React Flow handles and nodes to match dark theme */
 .react-flow__node {
   border-radius: 8px;
+  @apply transition-all duration-200;
 }
+.react-flow__node.selected {
+  @apply z-50;
+}
+
+/* React Flow Controls dark theme override */
+.react-flow__controls {
+  @apply shadow-lg border border-border rounded overflow-hidden;
+}
+.react-flow__controls-button {
+  @apply bg-dark-panel border-b border-border fill-gray-300 transition-colors;
+}
+.react-flow__controls-button:hover {
+  @apply bg-dark-bg fill-white;
+}
+.react-flow__controls-button:last-child {
+  @apply border-b-0;
+}
+
 .react-flow__handle {
   width: 10px;
   height: 10px;
