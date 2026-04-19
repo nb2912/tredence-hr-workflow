@@ -1,4 +1,4 @@
-import { BaseNode, WorkflowEdge } from '../types/workflow';
+import type { BaseNode, WorkflowEdge } from '../types/workflow';
 
 export const getConnectedNodes = (nodeId: string, edges: WorkflowEdge[]): string[] => {
   return edges

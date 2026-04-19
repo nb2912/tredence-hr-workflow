@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { X, Download, Play, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 import { useWorkflowStore } from '../store/workflowStore';
 import { simulateWorkflow } from '../mocks/simulate';
-import { SimulationStep } from '../types/workflow';
+import type { SimulationStep } from '../types/workflow';
 
 export function SimulationPanel() {
   const simulationRunning = useWorkflowStore(state => state.simulationRunning);

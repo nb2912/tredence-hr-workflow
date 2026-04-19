@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { BaseNode, WorkflowEdge, SimulationStep } from '../types/workflow';
+import type { BaseNode, WorkflowEdge, SimulationStep } from '../types/workflow';
 import { addEdge as rfAddEdge, applyNodeChanges, applyEdgeChanges, NodeChange, EdgeChange, Connection } from '@xyflow/react';
 
 interface WorkflowState {

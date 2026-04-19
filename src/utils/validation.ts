@@ -1,4 +1,4 @@
-import { BaseNode, WorkflowEdge } from '../types/workflow';
+import type { BaseNode, WorkflowEdge } from '../types/workflow';
 import { detectCycles } from './graphUtils';
 
 export const validateWorkflow = (nodes: BaseNode[], edges: WorkflowEdge[]): { valid: boolean; errors: string[] } => {

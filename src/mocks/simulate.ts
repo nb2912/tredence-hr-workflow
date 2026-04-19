@@ -1,4 +1,4 @@
-import { BaseNode, WorkflowEdge, SimulationStep } from '../types/workflow';
+import type { BaseNode, WorkflowEdge, SimulationStep } from '../types/workflow';
 import { topologicalSort } from '../utils/graphUtils';
 import { validateWorkflow } from '../utils/validation';
 

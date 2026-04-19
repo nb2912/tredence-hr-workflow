@@ -1,7 +1,7 @@
 import { useCallback, useRef } from 'react';
 import { useReactFlow } from '@xyflow/react';
 import { useWorkflowStore } from '../store/workflowStore';
-import { BaseNode, NodeType } from '../types/workflow';
+import type { BaseNode, NodeType } from '../types/workflow';
 import { validateWorkflow } from '../utils/validation';
 import { toast } from 'sonner';
 
