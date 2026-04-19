@@ -101,6 +101,18 @@ export function Toolbar() {
         </button>
 
         <button 
+          onClick={() => useWorkflowStore.getState().autoLayout()}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 border border-border transition-colors"
+          title="Auto Layout Nodes"
+        >
+          <div className="flex gap-1">
+             <div className="w-1.5 h-1.5 bg-gray-400 rounded-sm"></div>
+             <div className="w-1.5 h-1.5 bg-gray-400 rounded-sm"></div>
+          </div>
+          Auto Layout
+        </button>
+
+        <button 
           onClick={handleExport}
           className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 border border-border transition-colors"
         >

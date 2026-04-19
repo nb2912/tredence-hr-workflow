@@ -96,18 +96,23 @@ npm run test
 ]
 ```
 
+✅ **Auto-layout**: Added a "Auto Layout" button that uses the `dagre` engine to automatically tidy up and organize messy node connections.
+✅ **Node version history**: Implemented a "History" tab for every node. Each time you save changes, the previous version is snapshotted, allowing you to view and restore any past state of a specific node.
+
 ## Design Decisions & Tradeoffs
 1. **Mock Execution within the Client**: I simulated backend delay and execution steps directly in the client rather than using MSW (Mock Service Worker). This eliminated extra dependency bloat while still satisfying the mock delay requirement perfectly.
 2. **Strict Mode Concurrency**: The simulation animation required careful handling of React 18's strict mode. The interval was engineered to use closure-safe state updates (`prev.length`) to prevent double-mounting issues.
 3. **Node Types**: Disallowed `any` types by creating strongly typed `NodeProps<T>` specific to React Flow, ensuring form data always matches visual nodes.
 4. **CSS Overrides**: Customized React Flow's default white control buttons to match the deep dark mode aesthetic natively.
+5. **Dagre for Auto-layout**: Chose `dagre` for the auto-layout feature as it is the industry standard for Directed Acyclic Graphs (DAGs), ensuring logical Left-to-Right hierarchical alignment.
+6. **Immutable Snapshots for Versioning**: Node versioning uses deep copies of the `data` object, ensuring that restoring a past version doesn't inadvertently carry over stale reference-based state.
 
 ## What I Would Add With More Time
 1. **Branching Logic (Conditionals)**: A "Gateway" or "Decision" node to route paths based on 'If/Else' logic.
 2. **Actual Backend DB**: Node/Express server paired with PostgreSQL (Prisma) to save workflow definitions persistently.
 3. **Real API Integrations**: Hooking the "Automated Step" nodes into Zapier or Make.com webhooks.
-4. **Canvas Mini-Map Customization**: Making the mini-map transparent and interactive matching the dark theme perfectly.
-5. **Collaborative Editing**: Yjs and WebSockets to show other users' cursors on the canvas simultaneously.
+4. **Collaborative Editing**: Yjs and WebSockets to show other users' cursors on the canvas simultaneously.
+5. **Node Comments**: Ability to leave sticky notes or comments on specific nodes for team collaboration.
 
 ## Known Limitations
 - The graph execution currently assumes straight logical topological sorts (Kahn's algorithm). Parallel execution paths will still log sequentially rather than simultaneously.

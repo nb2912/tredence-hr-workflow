@@ -1,10 +1,17 @@
 export type NodeType = 'start' | 'task' | 'approval' | 'automated' | 'end'
 
+export interface NodeVersion {
+  timestamp: string;
+  data: any;
+}
+
+export type CustomNodeData = (StartNodeData | TaskNodeData | ApprovalNodeData | AutomatedNodeData | EndNodeData) & { versionHistory?: NodeVersion[] };
+
 export interface BaseNode {
   id: string
   type: NodeType
   position: { x: number; y: number }
-  data: StartNodeData | TaskNodeData | ApprovalNodeData | AutomatedNodeData | EndNodeData
+  data: CustomNodeData
 }
 
 export interface StartNodeData {

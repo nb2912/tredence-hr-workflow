@@ -19,6 +19,7 @@ interface WorkflowState {
   addNode: (node: BaseNode) => void;
   updateNode: (id: string, node: Partial<BaseNode>) => void;
   updateNodeData: (id: string, data: any) => void;
+  restoreNodeData: (id: string, data: any) => void;
   deleteNode: (id: string) => void;
   
   onNodesChange: (changes: NodeChange[]) => void;
@@ -40,6 +41,7 @@ interface WorkflowState {
   importWorkflow: (nodes: BaseNode[], edges: WorkflowEdge[]) => void;
   exportWorkflow: () => string;
   clearCanvas: () => void;
+  autoLayout: () => void;
 }
 
 export const useWorkflowStore = create<WorkflowState>((set, get) => ({
@@ -78,7 +80,36 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
 
   updateNodeData: (id, data) => {
     set({
-      nodes: get().nodes.map((n) => (n.id === id ? { ...n, data: { ...n.data, ...data } } : n)),
+      nodes: get().nodes.map((n) => {
+        if (n.id === id) {
+          const oldData = { ...n.data };
+          const history = n.data.versionHistory ? [...n.data.versionHistory] : [];
+          // Avoid saving an empty or initial state unless actually changed
+          if (Object.keys(oldData).length > 0) {
+            history.unshift({
+              timestamp: new Date().toISOString(),
+              data: oldData
+            });
+          }
+          return { ...n, data: { ...n.data, ...data, versionHistory: history } };
+        }
+        return n;
+      }),
+    });
+    get().saveHistory();
+  },
+
+  restoreNodeData: (id, data) => {
+    set({
+      nodes: get().nodes.map((n) => {
+        if (n.id === id) {
+          // Do not push the current state to history when restoring, just set the data directly
+          // but preserve the existing versionHistory
+          const history = n.data.versionHistory || [];
+          return { ...n, data: { ...data, versionHistory: history } };
+        }
+        return n;
+      }),
     });
     get().saveHistory();
   },
@@ -170,5 +201,24 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   clearCanvas: () => {
     set({ nodes: [], edges: [], selectedNodeId: null });
     get().saveHistory();
+  },
+
+  autoLayout: async () => {
+    const { nodes, edges, saveHistory } = get();
+    if (nodes.length === 0) return;
+    
+    // Lazy load the graph utils to avoid circular dependency issues
+    const { getLayoutedElements } = await import('../utils/graphUtils');
+    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+      nodes,
+      edges,
+      'LR'
+    );
+    
+    set({
+      nodes: layoutedNodes,
+      edges: layoutedEdges,
+    });
+    saveHistory();
   },
 }));
