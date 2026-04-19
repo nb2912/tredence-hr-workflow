@@ -42,12 +42,17 @@ export function useSimulation() {
 
   useEffect(() => {
     if (status === 'running' && steps.length > 0) {
-      let index = 0;
+      let currentIndex = 0;
       const interval = setInterval(() => {
-        if (index < steps.length) {
-          setVisibleSteps(prev => [...prev, steps[index]]);
-          index++;
-        } else {
+        setVisibleSteps(prev => {
+          if (prev.length < steps.length) {
+            return [...prev, steps[prev.length]];
+          }
+          return prev;
+        });
+        
+        currentIndex++;
+        if (currentIndex >= steps.length) {
           clearInterval(interval);
           setStatus('completed');
         }

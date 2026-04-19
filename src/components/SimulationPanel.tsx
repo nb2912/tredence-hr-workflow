@@ -65,18 +65,21 @@ export function SimulationPanel() {
           </div>
         )}
 
-        {visibleSteps.map((step, idx) => (
-          <div key={idx} className="flex gap-3 items-start animate-fade-in-up">
-            <div className="mt-0.5">{getStatusIcon(step.status)}</div>
-            <div className="flex-1 bg-dark-bg border border-border p-3 rounded-lg shadow-sm">
-              <div className="flex justify-between items-center mb-1">
-                <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400">{step.nodeType}</span>
-                <span className="text-[10px] text-gray-500">{new Date(step.timestamp).toLocaleTimeString()}</span>
+        {visibleSteps.map((step, idx) => {
+          if (!step) return null;
+          return (
+            <div key={idx} className="flex gap-3 items-start animate-fade-in-up">
+              <div className="mt-0.5">{getStatusIcon(step.status)}</div>
+              <div className="flex-1 bg-dark-bg border border-border p-3 rounded-lg shadow-sm">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400">{step.nodeType}</span>
+                  <span className="text-[10px] text-gray-500">{new Date(step.timestamp).toLocaleTimeString()}</span>
+                </div>
+                <p className="text-sm text-gray-200">{step.message}</p>
               </div>
-              <p className="text-sm text-gray-200">{step.message}</p>
             </div>
-          </div>
-        ))}
+          );
+        })}
         
         {status === 'completed' && (
           <div className="text-center pt-4 pb-2 text-sm text-gray-500">
