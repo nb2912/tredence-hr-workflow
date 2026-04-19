@@ -1,4 +1,4 @@
-import { X, Play, CheckCircle2, AlertCircle, Clock } from 'lucide-react';
+import { X, Play, CheckCircle2, Clock } from 'lucide-react';
 import { useWorkflowStore } from '../store/workflowStore';
 import { useSimulation } from '../hooks/useSimulation';
 

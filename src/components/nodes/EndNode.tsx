@@ -1,11 +1,11 @@
 import { Handle, Position } from '@xyflow/react';
 import type { NodeProps } from '@xyflow/react';
-import { Square, X } from 'lucide-react';
+import { Square } from 'lucide-react';
 import { useWorkflowStore } from '../../store/workflowStore';
-import type { EndNodeData } from '../../types/workflow';
+import type { BaseNode, EndNodeData } from '../../types/workflow';
 
-export function EndNode({ id, data, selected }: NodeProps<EndNodeData & Record<string, unknown>>) {
-  const deleteNode = useWorkflowStore(state => state.deleteNode);
+export function EndNode({ id, data, selected }: NodeProps<BaseNode>) {
+  const nodeData = data as EndNodeData;
   const invalidNodeIds = useWorkflowStore(state => state.invalidNodeIds);
   const isInvalid = invalidNodeIds.includes(id);
 
@@ -17,7 +17,7 @@ export function EndNode({ id, data, selected }: NodeProps<EndNodeData & Record<s
       </div>
       <div className="flex flex-col pr-2">
         <span className="text-[10px] font-bold text-red-600 uppercase tracking-wider leading-none mb-0.5">End</span>
-        <span className="text-sm font-bold text-gray-800 leading-none">{data.title || 'End'}</span>
+        <span className="text-sm font-bold text-gray-800 leading-none">{nodeData.title || 'End'}</span>
       </div>
     </div>
   );

@@ -2,9 +2,10 @@ import { Handle, Position } from '@xyflow/react';
 import type { NodeProps } from '@xyflow/react';
 import { UserCheck, X } from 'lucide-react';
 import { useWorkflowStore } from '../../store/workflowStore';
-import type { ApprovalNodeData } from '../../types/workflow';
+import type { BaseNode, ApprovalNodeData } from '../../types/workflow';
 
-export function ApprovalNode({ id, data, selected }: NodeProps<ApprovalNodeData & Record<string, unknown>>) {
+export function ApprovalNode({ id, data, selected }: NodeProps<BaseNode>) {
+  const nodeData = data as ApprovalNodeData;
   const deleteNode = useWorkflowStore(state => state.deleteNode);
   const invalidNodeIds = useWorkflowStore(state => state.invalidNodeIds);
   const isInvalid = invalidNodeIds.includes(id);
@@ -20,13 +21,13 @@ export function ApprovalNode({ id, data, selected }: NodeProps<ApprovalNodeData 
 
       <div className="bg-amber-50 px-4 py-2 flex items-center gap-2 border-b border-border">
         <UserCheck size={16} className="text-amber-600" />
-        <span className="font-bold text-amber-600 text-xs uppercase tracking-wider">{data.title || 'Approval'}</span>
+        <span className="font-bold text-amber-600 text-xs uppercase tracking-wider">{nodeData.title || 'Approval'}</span>
       </div>
       
       <div className="p-4 flex flex-col gap-2 text-sm">
         <div className="flex justify-between items-center">
           <span className="text-gray-500 text-xs">Approver Role:</span>
-          <span className="font-bold text-gray-800">{data.approverRole || 'Unassigned'}</span>
+          <span className="font-bold text-gray-800">{nodeData.approverRole || 'Unassigned'}</span>
         </div>
       </div>
 

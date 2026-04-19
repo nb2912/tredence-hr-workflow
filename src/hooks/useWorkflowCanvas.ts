@@ -13,7 +13,6 @@ export function useWorkflowCanvas() {
   const nodes = useWorkflowStore(state => state.nodes);
   const edges = useWorkflowStore(state => state.edges);
   const setSelectedNode = useWorkflowStore(state => state.setSelectedNode);
-  const deleteNode = useWorkflowStore(state => state.deleteNode);
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();

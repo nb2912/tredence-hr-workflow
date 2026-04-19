@@ -99,7 +99,7 @@ export function NodeConfigPanel() {
                     </button>
                   </div>
                   <div className="text-[11px] text-gray-600 line-clamp-2 italic">
-                    {version.data.title || version.data.label || 'Untitled Version'}
+                    {(version.data as any).title || 'Untitled Version'}
                   </div>
                 </div>
               ))

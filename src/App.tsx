@@ -1,5 +1,5 @@
-import { useCallback, useEffect } from 'react';
-import { ReactFlow, ReactFlowProvider, Background, Controls, MiniMap, Panel } from '@xyflow/react';
+import { useEffect } from 'react';
+import { ReactFlow, ReactFlowProvider, Background, Controls, MiniMap } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { Toaster } from 'sonner';
 
@@ -38,7 +38,6 @@ function WorkflowDesigner() {
   const undo = useWorkflowStore(state => state.undo);
   const redo = useWorkflowStore(state => state.redo);
   const deleteNode = useWorkflowStore(state => state.deleteNode);
-  const deleteEdge = useWorkflowStore(state => state.deleteEdge);
   const selectedNodeId = useWorkflowStore(state => state.selectedNodeId);
 
   useEffect(() => {
@@ -58,7 +57,6 @@ function WorkflowDesigner() {
         if (selectedNodeId) {
           deleteNode(selectedNodeId);
         }
-        // Could also add edge deletion logic here if edges can be selected
       }
     };
 

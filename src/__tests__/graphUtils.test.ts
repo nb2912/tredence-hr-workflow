@@ -1,6 +1,6 @@
 import { describe, it, expect } from '@jest/globals';
 import { detectCycles, topologicalSort } from '../utils/graphUtils';
-import { BaseNode, WorkflowEdge } from '../types/workflow';
+import type { BaseNode, WorkflowEdge } from '../types/workflow';
 
 describe('graphUtils', () => {
   describe('detectCycles', () => {

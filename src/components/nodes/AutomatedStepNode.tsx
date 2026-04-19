@@ -2,9 +2,10 @@ import { Handle, Position } from '@xyflow/react';
 import type { NodeProps } from '@xyflow/react';
 import { Zap, X } from 'lucide-react';
 import { useWorkflowStore } from '../../store/workflowStore';
-import type { AutomatedNodeData } from '../../types/workflow';
+import type { BaseNode, AutomatedNodeData } from '../../types/workflow';
 
-export function AutomatedStepNode({ id, data, selected }: NodeProps<AutomatedNodeData & Record<string, unknown>>) {
+export function AutomatedStepNode({ id, data, selected }: NodeProps<BaseNode>) {
+  const nodeData = data as AutomatedNodeData;
   const deleteNode = useWorkflowStore(state => state.deleteNode);
   const invalidNodeIds = useWorkflowStore(state => state.invalidNodeIds);
   const isInvalid = invalidNodeIds.includes(id);
@@ -20,13 +21,13 @@ export function AutomatedStepNode({ id, data, selected }: NodeProps<AutomatedNod
 
       <div className="bg-purple-50 px-4 py-2 flex items-center gap-2 border-b border-border">
         <Zap size={16} className="text-purple-600" />
-        <span className="font-bold text-purple-600 text-xs uppercase tracking-wider">{data.title || 'Automated Step'}</span>
+        <span className="font-bold text-purple-600 text-xs uppercase tracking-wider">{nodeData.title || 'Automated Step'}</span>
       </div>
       
       <div className="p-4 flex flex-col gap-2 text-sm">
         <div className="flex justify-between items-center">
           <span className="text-gray-500 text-xs">Action ID:</span>
-          <span className="font-bold text-gray-800 truncate max-w-[140px]">{data.actionId || 'None Selected'}</span>
+          <span className="font-bold text-gray-800 truncate max-w-[140px]">{nodeData.actionId || 'None Selected'}</span>
         </div>
       </div>
 

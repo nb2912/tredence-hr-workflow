@@ -2,9 +2,10 @@ import { Handle, Position } from '@xyflow/react';
 import type { NodeProps } from '@xyflow/react';
 import { Play, X } from 'lucide-react';
 import { useWorkflowStore } from '../../store/workflowStore';
-import type { StartNodeData } from '../../types/workflow';
+import type { BaseNode, StartNodeData } from '../../types/workflow';
 
-export function StartNode({ id, data, selected }: NodeProps<StartNodeData & Record<string, unknown>>) {
+export function StartNode({ id, data, selected }: NodeProps<BaseNode>) {
+  const nodeData = data as StartNodeData;
   const deleteNode = useWorkflowStore(state => state.deleteNode);
   const invalidNodeIds = useWorkflowStore(state => state.invalidNodeIds);
   const isInvalid = invalidNodeIds.includes(id);
@@ -24,7 +25,7 @@ export function StartNode({ id, data, selected }: NodeProps<StartNodeData & Reco
       </div>
       <div className="flex flex-col">
         <span className="text-[10px] font-bold text-green-600 uppercase tracking-wider leading-none mb-0.5">Start</span>
-        <span className="text-sm font-bold text-gray-800 leading-none">{data.title || 'Start'}</span>
+        <span className="text-sm font-bold text-gray-800 leading-none">{nodeData.title || 'Start'}</span>
       </div>
     </div>
   );

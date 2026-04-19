@@ -1,9 +1,10 @@
 import { useFieldArray } from 'react-hook-form';
 import { Plus, Trash2 } from 'lucide-react';
 import { useNodeForm } from '../../hooks/useNodeForm';
+import type { TaskNodeData } from '../../types/workflow';
 
 export function TaskNodeForm({ nodeId }: { nodeId: string }) {
-  const { form, onSubmit } = useNodeForm(nodeId, { 
+  const { form, onSubmit } = useNodeForm<TaskNodeData>(nodeId, { 
     title: 'Task', 
     description: '', 
     assignee: '', 
@@ -13,7 +14,7 @@ export function TaskNodeForm({ nodeId }: { nodeId: string }) {
   const { register, control, handleSubmit } = form;
 
   const { fields, append, remove } = useFieldArray({
-    control,
+    control: control as any,
     name: "customFields"
   });
 
@@ -71,12 +72,12 @@ export function TaskNodeForm({ nodeId }: { nodeId: string }) {
           {fields.map((field, index) => (
             <div key={field.id} className="flex gap-2 items-center group animate-in slide-in-from-left-2">
               <input
-                {...register(`customFields.${index}.key` as const, { required: true })}
+                {...register(`customFields.${index}.key` as any, { required: true })}
                 placeholder="Key"
                 className="w-1/2 bg-gray-50 border border-border rounded-md px-2 py-1 text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all"
               />
               <input
-                {...register(`customFields.${index}.value` as const, { required: true })}
+                {...register(`customFields.${index}.value` as any, { required: true })}
                 placeholder="Value"
                 className="w-1/2 bg-gray-50 border border-border rounded-md px-2 py-1 text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all"
               />

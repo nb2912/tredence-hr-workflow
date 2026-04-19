@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import type { BaseNode, WorkflowEdge, SimulationStep } from '../types/workflow';
 import { addEdge as rfAddEdge, applyNodeChanges, applyEdgeChanges } from '@xyflow/react';
 import type { NodeChange, EdgeChange, Connection } from '@xyflow/react';
+import { getLayoutedElements } from '../utils/graphUtils';
 
 interface WorkflowState {
   nodes: BaseNode[];
@@ -124,9 +125,8 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   },
 
   onNodesChange: (changes) => {
-    const currentNodes = get().nodes as any;
     set({
-      nodes: applyNodeChanges(changes, currentNodes) as BaseNode[],
+      nodes: applyNodeChanges(changes, get().nodes as any) as unknown as BaseNode[],
     });
     // Only save history on certain events to avoid spamming undo with position updates
     if (changes.some(c => c.type === 'remove' || c.type === 'add')) {
@@ -135,9 +135,8 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   },
 
   onEdgesChange: (changes) => {
-    const currentEdges = get().edges as any;
     set({
-      edges: applyEdgeChanges(changes, currentEdges) as WorkflowEdge[],
+      edges: applyEdgeChanges(changes, get().edges as any) as unknown as WorkflowEdge[],
     });
     if (changes.some(c => c.type === 'remove' || c.type === 'add')) {
       get().saveHistory();
@@ -145,7 +144,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   },
 
   onConnect: (connection) => {
-    set({ edges: rfAddEdge(connection, get().edges as any) as WorkflowEdge[] });
+    set({ edges: rfAddEdge(connection, get().edges as any) as unknown as WorkflowEdge[] });
     get().saveHistory();
   },
 
@@ -203,12 +202,10 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     get().saveHistory();
   },
 
-  autoLayout: async () => {
+  autoLayout: () => {
     const { nodes, edges, saveHistory } = get();
     if (nodes.length === 0) return;
     
-    // Lazy load the graph utils to avoid circular dependency issues
-    const { getLayoutedElements } = await import('../utils/graphUtils');
     const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
       nodes,
       edges,

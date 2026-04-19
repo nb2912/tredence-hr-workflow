@@ -2,9 +2,10 @@ import { Handle, Position } from '@xyflow/react';
 import type { NodeProps } from '@xyflow/react';
 import { CheckSquare, X } from 'lucide-react';
 import { useWorkflowStore } from '../../store/workflowStore';
-import type { TaskNodeData } from '../../types/workflow';
+import type { BaseNode, TaskNodeData } from '../../types/workflow';
 
-export function TaskNode({ id, data, selected }: NodeProps<TaskNodeData & Record<string, unknown>>) {
+export function TaskNode({ id, data, selected }: NodeProps<BaseNode>) {
+  const nodeData = data as TaskNodeData;
   const deleteNode = useWorkflowStore(state => state.deleteNode);
   const invalidNodeIds = useWorkflowStore(state => state.invalidNodeIds);
   const isInvalid = invalidNodeIds.includes(id);
@@ -27,8 +28,8 @@ export function TaskNode({ id, data, selected }: NodeProps<TaskNodeData & Record
       </div>
       
       <div className="p-3">
-        <div className="text-sm font-bold text-gray-800 leading-tight mb-1">{data.title || 'Untitled Task'}</div>
-        <div className="text-[11px] text-gray-500 line-clamp-1">{data.assignee || 'Unassigned'}</div>
+        <div className="text-sm font-bold text-gray-800 leading-tight mb-1">{nodeData.title || 'Untitled Task'}</div>
+        <div className="text-[11px] text-gray-500 line-clamp-1">{nodeData.assignee || 'Unassigned'}</div>
       </div>
     </div>
   );

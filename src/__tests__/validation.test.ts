@@ -1,6 +1,6 @@
 import { describe, it, expect } from '@jest/globals';
 import { validateWorkflow } from '../utils/validation';
-import { BaseNode, WorkflowEdge } from '../types/workflow';
+import type { BaseNode, WorkflowEdge } from '../types/workflow';
 
 describe('validateWorkflow', () => {
   it('should invalidate if no start node exists', () => {

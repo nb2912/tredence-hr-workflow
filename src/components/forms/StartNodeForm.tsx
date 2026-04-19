@@ -1,13 +1,17 @@
 import { useFieldArray } from 'react-hook-form';
 import { Plus, Trash2 } from 'lucide-react';
 import { useNodeForm } from '../../hooks/useNodeForm';
+import type { StartNodeData } from '../../types/workflow';
 
 export function StartNodeForm({ nodeId }: { nodeId: string }) {
-  const { form, onSubmit } = useNodeForm(nodeId, { title: 'Start Workflow', metadata: [] });
+  const { form, onSubmit } = useNodeForm<StartNodeData>(nodeId, { 
+    title: 'Start Workflow', 
+    metadata: [] 
+  });
   const { register, control, handleSubmit } = form;
 
   const { fields, append, remove } = useFieldArray({
-    control,
+    control: control as any,
     name: "metadata"
   });
 
@@ -37,12 +41,12 @@ export function StartNodeForm({ nodeId }: { nodeId: string }) {
           {fields.map((field, index) => (
             <div key={field.id} className="flex gap-2 items-center group animate-in slide-in-from-left-2">
               <input
-                {...register(`metadata.${index}.key` as const, { required: true })}
+                {...register(`metadata.${index}.key` as any, { required: true })}
                 placeholder="Key"
                 className="w-1/2 bg-gray-50 border border-border rounded-md px-2 py-1 text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all"
               />
               <input
-                {...register(`metadata.${index}.value` as const, { required: true })}
+                {...register(`metadata.${index}.value` as any, { required: true })}
                 placeholder="Value"
                 className="w-1/2 bg-gray-50 border border-border rounded-md px-2 py-1 text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all"
               />
