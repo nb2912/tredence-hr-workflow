@@ -1,4 +1,4 @@
-import { Play, CheckSquare, UserCheck, Zap, Square, Download, Upload, Trash2 } from 'lucide-react';
+import { Play, CheckSquare, UserCheck, Zap, Square, Download, Upload, Trash2, X } from 'lucide-react';
 import { useWorkflowStore } from '../store/workflowStore';
 import { serializeWorkflow, deserializeWorkflow } from '../utils/graphUtils';
 import { toast } from 'sonner';
