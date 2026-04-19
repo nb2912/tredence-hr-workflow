@@ -1,4 +1,5 @@
-import { Handle, Position, NodeProps } from '@xyflow/react';
+import { Handle, Position } from '@xyflow/react';
+import type { NodeProps } from '@xyflow/react';
 import { CheckSquare, X } from 'lucide-react';
 import { useWorkflowStore } from '../../store/workflowStore';
 import type { TaskNodeData } from '../../types/workflow';
